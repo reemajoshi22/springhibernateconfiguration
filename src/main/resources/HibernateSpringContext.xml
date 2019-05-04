@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations" value="classpath:/application.properties" />
+	</bean>
+	 <bean id="hibernateTransactionManager"  class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="hibernateTemplateSessionFactory" />
+    </bean>
+   
+	<bean id="hibernateTemplateSessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="c3p0SpringHibernateDataSource"></property>
+		<!-- List of Hibernate HBM files should be placed here -->
+		<property name="mappingResources">
+			<list>
+				<value>manufacturer.hbm.xml</value>
+				<value>os.hbm.xml</value>
+				<value>phone.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+		<props>
+		<prop key="hibernate.hbm2ddl.auto">
+                   create
+                </prop>
+		<prop key="hibernate.dialect">
+		org.hibernate.dialect.MySQL5Dialect
+		</prop>
+		</props>
+		</property>
+	</bean>
+	<bean id="c3p0SpringHibernateDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass"
+			value="${JDBC.MYSQL.DRIVER:org.hibernate.dialect.MySQL5Dialect}" />
+		<property name="jdbcUrl"
+			value="${JDBC.MYSQL.CONNECTION.URL.ENRL.UIDMASTER:jdbc:mysql://localhost:3306/learning}" />
+		<property name="user" value="${JDBC.MYSQL.USERNAME.ENRL.UIDMASTER:root}" />
+		<property name="password" value="${JDBC.MYSQL.PASSWORD.ENRL.UIDMASTER:root}" />
+		<property name="minPoolSize" value="${JDBC.POOL.MIN.SIZE.ENRL.UIDMASTER:2}" />
+		<property name="maxPoolSize" value="${JDBC.POOL.MAX.ACTIVE.ENRL.UIDMASTER:25}" />
+		<property name="acquireIncrement" value="${JDBC.POOL.INCREMENT:3}" />
+		<property name="maxIdleTime" value="${JDBC.POOL.IDLE.TIME.SECONDS:300}" />
+		<property name="maxStatements" value="${JDBC.POOL.STATEMENTS:100}" />
+		<property name="idleConnectionTestPeriod" value="${JDBC.TEST.IDLE.TEST.PERIOD:60}" />
+		<property name="testConnectionOnCheckin" value="${JDBC.TEST.ON.CHECKIN:true}" />
+		<property name="preferredTestQuery"
+			value="${JDBC.VALIDATION.QUERY.MYSQL:select 1 from dual}" />
+	</bean>
+	<bean id="phoneDao" class="springhibernateconfiguration.PhoneDao_spring">
+		<property name="sessionFactory" ref="hibernateTemplateSessionFactory"></property>
+	</bean>
+</beans>
+    
